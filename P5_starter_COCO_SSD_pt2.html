@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>COCO-SSD Demo</title>
+
+  <!-- Load TensorFlow.js -->
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+
+  <!-- Load the coco-ssd model -->
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd"></script>
+</head>
+<body>
+
+  <!-- Image to detect -->
+  <div class="inputoutput">
+    <!-- Input Image -->
+    <canvas id="canvasOutput"></canvas>
+    <video id="videoSrc" alt="" />
+    <div class="caption">
+    </div>
+  </div>
+
+  <!-- Load your external JS file (AFTER tf and coco-ssd) -->
+  <script src="P5_starter_COCO_SSD_pt1.js"></script>
+
+</body>
+</html>
