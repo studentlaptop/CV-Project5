@@ -1,17 +1,32 @@
 // 'cocoSsd' and 'tf' are available globally
 // because we loaded them via script tags in index.html
 
-const videoElement = document.getElementById('videoSrc');
+const videoElement = document.getElementById('videoInput');
 const canvas = document.getElementById('canvasOutput');
+// Prefer camera resolution nearest to 1280x720.
 const ctx = canvas.getContext('2d');
+const constraints = {
+  audio: true,
+  video: { width: 1280, height: 720 },
+};
 
+navigator.mediaDevices
+    .getUserMedia(constraints)
+    .then((mediaStream) => {
+      videoElement.srcObject = mediaStream;
+      videoElement.onloadedmetadata = () => {
+        videoElement.play();
+      };
+    })
+    .catch((err) => {
+      // always check for errors at the end.
+      console.error(`${err.name}: ${err.message}`);
+    });
 
-navigator.mediaDevices.getUserMedia({ video: true });
-
-// Wait until the image is fully loaded
+// Wait until the webcam feed is fully loaded
 videoElement.onload = async () => {
-  canvas.width = videoElement.width;
-  canvas.height = videoElement.height;
+  canvas.width = videoElement.videoWidth;
+  canvas.height = videoElement.videoHeight;
   ctx.drawImage(videoElement, 0, 0);
 
   // Load the model
