@@ -13,7 +13,14 @@
 <body>
 
   <!-- Image to detect -->
-  <img id="img" src="dog.jpg"/>
+  <div class="inputoutput">
+    <!-- Input Image -->
+    <img id="imageSrc" alt="No Image" />
+    <div class="caption">
+      Source Image
+      <input type="file" id="fileInput" name="file"/>
+    </div>
+  </div>
 
   <!-- Load your external JS file (AFTER tf and coco-ssd) -->
   <script src="P5_starter_COCO_SSD.js"></script>
