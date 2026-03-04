@@ -6,8 +6,8 @@ const canvas = document.getElementById('canvasOutput');
 // Prefer camera resolution nearest to 1280x720.
 const ctx = canvas.getContext('2d');
 const constraints = {
-  audio: true,
-  video: { width: 1280, height: 720 },
+  audio: false,
+  video: { width: 640, height: 360 },
 };
 
 navigator.mediaDevices
@@ -23,30 +23,46 @@ navigator.mediaDevices
       console.error(`${err.name}: ${err.message}`);
     });
 
-// Wait until the webcam feed is fully loaded
-videoElement.onload = async () => {
+let model;
+
+// Load the model first
+cocoSsd.load().then((loadedModel) => {
+  model = loadedModel;
+  console.log("Model loaded");
+});
+
+// When the video starts playing
+videoElement.addEventListener("loadeddata", () => {
   canvas.width = videoElement.videoWidth;
   canvas.height = videoElement.videoHeight;
-  ctx.drawImage(videoElement, 0, 0);
+  detectFrame();
+});
 
-  // Load the model
-  const model = await cocoSsd.load();
+async function detectFrame() {
+  if (!model) {
+    requestAnimationFrame(detectFrame);
+    return;
+  }
+
+  // Draw video frame
+  ctx.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
 
   // Run detection
   const predictions = await model.detect(videoElement);
 
-  console.log('Predictions:', predictions);
-
   predictions.forEach(prediction => {
     const [x, y, width, height] = prediction.bbox;
-// Draw rectangle
+
+    // Rectangle
     ctx.strokeStyle = "red";
     ctx.lineWidth = 2;
     ctx.strokeRect(x, y, width, height);
-// Draw label background
+
+    // Label background
     ctx.fillStyle = "red";
     ctx.fillRect(x, y - 20, width, 20);
-// Draw label text
+
+    // Label text
     ctx.fillStyle = "white";
     ctx.font = "16px Arial";
     ctx.fillText(
@@ -55,6 +71,9 @@ videoElement.onload = async () => {
         y - 5
     );
   });
-};
+
+  // Loop forever
+  requestAnimationFrame(detectFrame);
+}
 
 
